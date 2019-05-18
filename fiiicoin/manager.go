@@ -218,6 +218,7 @@ func (wm *WalletManager) EstimateFeeRate() (decimal.Decimal, error) {
 	}
 
 	feeRate, _ = decimal.NewFromString(estimatesmartfee.String())
+	feeRate = feeRate.Shift(-wm.Decimal())
 
 	return feeRate, nil
 }

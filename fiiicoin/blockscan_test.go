@@ -15,4 +15,58 @@
 
 package fiiicoin
 
+import "testing"
 
+func TestGetBlockHeight(t *testing.T) {
+	height, _ := tw.GetBlockHeight()
+	t.Logf("GetBlockHeight height = %d \n", height)
+}
+
+func TestGetBlockHash(t *testing.T) {
+	//height := GetLocalBlockHeight()
+	hash, err := tw.GetBlockHash(46044)
+	if err != nil {
+		t.Errorf("GetBlockHash failed unexpected error: %v\n", err)
+		return
+	}
+	t.Logf("GetBlockHash hash = %s \n", hash)
+}
+
+func TestGetBlock(t *testing.T) {
+	raw, err := tw.GetBlock("2E643447A46CC033A3D4576858C0FF664A84F2F7BE79B3D63EBE34C18AD4E1C4")
+	if err != nil {
+		t.Errorf("GetBlock failed unexpected error: %v\n", err)
+		return
+	}
+	t.Logf("GetBlock = %v \n", raw)
+}
+
+func TestGetTransaction(t *testing.T) {
+	raw, err := tw.GetTransaction("31D2D400CB71FA1EE27A64834C62E3771E4E61B70510129842BF8234A0E89549")
+	if err != nil {
+		t.Errorf("GetTransaction failed unexpected error: %v\n", err)
+		return
+	}
+
+	t.Logf("BlockHash = %v \n", raw.BlockHash)
+	t.Logf("BlockHeight = %v \n", raw.BlockHeight)
+	t.Logf("Blocktime = %v \n", raw.Blocktime)
+	t.Logf("Fees = %v \n", raw.Fees)
+
+	t.Logf("========= vins ========= \n")
+
+	for i, vin := range raw.Vins {
+		t.Logf("TxID[%d] = %v \n", i, vin.TxID)
+		t.Logf("Vout[%d] = %v \n", i, vin.Vout)
+		t.Logf("Addr[%d] = %v \n", i, vin.Addr)
+		t.Logf("Value[%d] = %v \n", i, vin.Amount)
+	}
+
+	t.Logf("========= vouts ========= \n")
+
+	for i, out := range raw.Vouts {
+		t.Logf("ScriptPubKey[%d] = %v \n", i, out.LockScript)
+		t.Logf("Addr[%d] = %v \n", i, out.Addr)
+		t.Logf("Value[%d] = %v \n", i, out.Amount)
+	}
+}

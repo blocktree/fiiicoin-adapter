@@ -8,29 +8,42 @@ openwtester包下的测试用例已经集成了openwallet钱包体系，创建co
 
 ```ini
 
-# RPC Server Type，0: CoreWallet RPC; 1: Explorer API
-rpcServerType = 1
-# node api url, if RPC Server Type = 0, use fiiicoin core full node
-;serverAPI = "http://127.0.0.1:8333/"
-# node api url, if RPC Server Type = 1, use bitbay insight-api
-serverAPI = "http://127.0.0.1::20003/insight-api/"
-# RPC Authentication Username
-rpcUser = "user"
-# RPC Authentication Password
-rpcPassword = "password"
+# node api url
+serverAPI = "http://127.0.0.1:1005"
 # Is network test?
-isTestNet = true
-# Omni Core RPC API
-omniCoreAPI = "http://127.0.0.1:10016"
-# Omni Core RPC Authentication Username
-omniRPCUser = "user"
-# Omni Core RPC Authentication Password
-omniRPCPassword = "password"
-# Omni token transfer minimum cost
-omniTransferCost = "0.00000546"
-# support omnicore
-omniSupport = true
-# support segWit
-supportSegWit = true
+isTestNet = false
 
 ```
+
+## 资料介绍
+
+### 官网
+
+https://fiii.io/
+
+### 区块浏览器
+
+https://explorer.fiii.io/
+
+### github
+
+https://github.com/FiiiLab
+
+### 适配资料
+
+#### 地址编码的相关代码或代码链接
+
+https://github.com/FiiiLab/FiiiCoin/blob/master/Node/Shared/FiiiChain.Consensus/AccountIdHelper.cs
+
+
+#### rpc api文档的链接
+
+https://documenter.getpostman.com/view/3484128/RzfmDmFx
+
+#### 交易单序列化算法
+
+https://github.com/FiiiLab/FiiiCoin/blob/master/Node/Shared/FiiiChain.Messages/TransactionMsg.cs
+
+#### 交易单签名算法
+
+https://github.com/FiiiLab/FiiiCoin/blob/master/Node/Shared/FiiiChain.Consensus/Script.cs

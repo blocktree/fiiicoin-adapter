@@ -1192,7 +1192,6 @@ func (wm *WalletManager) GetTransaction(txid string) (*Transaction, error) {
 
 	request := []interface{}{
 		txid,
-		true,
 	}
 
 	result, err := wm.WalletClient.Call("GetTransaction", request)

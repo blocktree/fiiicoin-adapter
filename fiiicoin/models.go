@@ -72,11 +72,10 @@ type Unspent struct {
 	Address       string `json:"address"`
 	AccountID     string `json:"account" storm:"index"`
 	ScriptPubKey  string `json:"scriptPubKey"`
-	Amount        string `json:"amount"`
+	Amount        uint64 `json:"amount"`
 	Confirmations uint64 `json:"confirmations"`
 	Spendable     bool   `json:"spendable"`
 	Solvable      bool   `json:"solvable"`
-	HDAddress     openwallet.Address
 }
 
 func NewUnspent(json *gjson.Result) *Unspent {
@@ -86,11 +85,11 @@ func NewUnspent(json *gjson.Result) *Unspent {
 	obj.Vout = gjson.Get(json.Raw, "vout").Uint()
 	obj.Address = gjson.Get(json.Raw, "address").String()
 	obj.AccountID = gjson.Get(json.Raw, "account").String()
-	obj.ScriptPubKey = gjson.Get(json.Raw, "scriptPubKey").String()
-	obj.Amount = gjson.Get(json.Raw, "amount").String()
+	obj.ScriptPubKey = gjson.Get(json.Raw, "ScriptPubKey").String()
+	obj.Amount = gjson.Get(json.Raw, "amount").Uint()
 	obj.Confirmations = gjson.Get(json.Raw, "confirmations").Uint()
-	//obj.Spendable = gjson.Get(json.Raw, "spendable").Bool()
-	obj.Spendable = true
+	obj.Spendable = gjson.Get(json.Raw, "spendable").Bool()
+	//obj.Spendable = true
 	obj.Solvable = gjson.Get(json.Raw, "solvable").Bool()
 
 	return obj
@@ -137,48 +136,34 @@ type Block struct {
 	*/
 
 	Hash              string
-	Confirmations     uint64
 	Merkleroot        string
-	tx                []string
 	Previousblockhash string
 	Height            uint64 `storm:"id"`
 	Version           uint64
 	Time              uint64
 	Fork              bool
 	txDetails         []*Transaction
+	tx                []string
 	isVerbose         bool
 }
 
 func NewBlock(json *gjson.Result) *Block {
 	obj := &Block{}
 	//解析json
-	obj.Height = gjson.Get(json.Raw, "height").Uint()
-	obj.Hash = gjson.Get(json.Raw, "hash").String()
-	obj.Confirmations = gjson.Get(json.Raw, "confirmations").Uint()
-	obj.Merkleroot = gjson.Get(json.Raw, "merkleroot").String()
-	obj.Previousblockhash = gjson.Get(json.Raw, "previousblockhash").String()
-	obj.Version = gjson.Get(json.Raw, "version").Uint()
-	obj.Time = gjson.Get(json.Raw, "time").Uint()
+	obj.Height = gjson.Get(json.Raw, "Header.Height").Uint()
+	obj.Hash = gjson.Get(json.Raw, "Header.Hash").String()
+	obj.Previousblockhash = gjson.Get(json.Raw, "Header.PreviousBlockHash").String()
+	obj.Version = gjson.Get(json.Raw, "Header.Version").Uint()
+	obj.Time = gjson.Get(json.Raw, "Header.Timestamp").Uint()
 
 	txs := make([]string, 0)
-	txDetails := make([]*Transaction, 0)
-	for _, tx := range gjson.Get(json.Raw, "tx").Array() {
-		if tx.IsObject() {
-			obj.isVerbose = true
-			txObj := newTxByCore(&tx)
-			txObj.BlockHeight = obj.Height
-			txObj.BlockHash = obj.Hash
-			txObj.Blocktime = int64(obj.Time)
-			txDetails = append(txDetails, txObj)
-		} else {
-			obj.isVerbose = false
-			txs = append(txs, tx.String())
-		}
-
+	//txDetails := make([]*Transaction, 0)
+	for _, tx := range gjson.Get(json.Raw, "Transactions").Array() {
+		txs = append(txs, tx.Get("Hash").String())
 	}
 
 	obj.tx = txs
-	obj.txDetails = txDetails
+	//obj.txDetails = txDetails
 
 	return obj
 }
@@ -189,7 +174,6 @@ func (b *Block) BlockHeader(symbol string) *openwallet.BlockHeader {
 	obj := openwallet.BlockHeader{}
 	//解析json
 	obj.Hash = b.Hash
-	obj.Confirmations = b.Confirmations
 	obj.Merkleroot = b.Merkleroot
 	obj.Previousblockhash = b.Previousblockhash
 	obj.Height = b.Height
@@ -279,27 +263,30 @@ func newTxByCore(json *gjson.Result) *Transaction {
 
 	obj := Transaction{}
 	//解析json
-	obj.TxID = gjson.Get(json.Raw, "txid").String()
-	obj.Version = gjson.Get(json.Raw, "version").Uint()
-	obj.LockTime = gjson.Get(json.Raw, "locktime").Int()
-	obj.BlockHash = gjson.Get(json.Raw, "blockhash").String()
-	//obj.BlockHeight = gjson.Get(json.Raw, "blockheight").Uint()
-	obj.Confirmations = gjson.Get(json.Raw, "confirmations").Uint()
-	obj.Blocktime = gjson.Get(json.Raw, "blocktime").Int()
-	obj.Size = gjson.Get(json.Raw, "size").Uint()
-	//obj.Fees = gjson.Get(json.Raw, "fees").String()
+	obj.TxID = gjson.Get(json.Raw, "Hash").String()
+	obj.Version = gjson.Get(json.Raw, "Version").Uint()
+	obj.LockTime = gjson.Get(json.Raw, "LockTime").Int()
+	obj.Timestamp = gjson.Get(json.Raw, "Timestamp").Int()
+	obj.ExpiredTime = gjson.Get(json.Raw, "ExpiredTime").Int()
+	obj.BlockHash = gjson.Get(json.Raw, "BlockHash").String()
+	obj.Size = gjson.Get(json.Raw, "Size").Uint()
+	obj.Fees = gjson.Get(json.Raw, "Fee").Uint()
 	obj.Decimals = Decimals
 	obj.Vins = make([]*Vin, 0)
-	if vins := gjson.Get(json.Raw, "vin"); vins.IsArray() {
+	if vins := gjson.Get(json.Raw, "Inputs"); vins.IsArray() {
 		for i, vin := range vins.Array() {
 			input := newTxVinByCore(&vin)
 			input.N = uint64(i)
 			obj.Vins = append(obj.Vins, input)
+
+			if input.TxID == "0000000000000000000000000000000000000000000000000000000000000000" {
+				obj.IsCoinBase = true
+			}
 		}
 	}
 
 	obj.Vouts = make([]*Vout, 0)
-	if vouts := gjson.Get(json.Raw, "vout"); vouts.IsArray() {
+	if vouts := gjson.Get(json.Raw, "Outputs"); vouts.IsArray() {
 		for _, vout := range vouts.Array() {
 			output := newTxVoutByCore(&vout)
 			obj.Vouts = append(obj.Vouts, output)
@@ -311,11 +298,25 @@ func newTxByCore(json *gjson.Result) *Transaction {
 
 func newTxVinByCore(json *gjson.Result) *Vin {
 
+	/*
+	   {
+	       "Id": 0,
+	       "TransactionHash": "31D2D400CB71FA1EE27A64834C62E3771E4E61B70510129842BF8234A0E89549",
+	       "OutputTransactionHash": "EA6CD4E3E7B4A5D5C5EB2FA0E72A76611DDB17BA412711764C51119635D1F8F9",
+	       "OutputIndex": 0,
+	       "Size": 222,
+	       "Amount": 25000051954,
+	       "UnlockScript": "50FAB2C1C65467397BB9EB9C445E657361F735B66AA1FA79B74BE79430977DE8FCEDAD7C8067A9B17BE0C8DA5D159041ECD7859BFF9660E7CD962DDD24EC8E0B[ALL] 302A300506032B657003210002F171F998F7198852C4AE3615AED29ED9390274821E50C79639B432460AE229",
+	       "AccountId": "fiiimUwLmiZ5gwyVZvam1eeSbweNz2vaVP6GtB",
+	       "IsDiscarded": false,
+	       "BlockHash": "8E58AB55D368EADEB08F39F3CC940CD50EBCFBE930052B13254571017A6D364F"
+	   }
 
+	*/
 	obj := Vin{}
 	//解析json
-	obj.TxID = gjson.Get(json.Raw, "txid").String()
-	obj.Vout = gjson.Get(json.Raw, "vout").Uint()
+	obj.TxID = gjson.Get(json.Raw, "OutputTransactionHash").String()
+	obj.Vout = gjson.Get(json.Raw, "OutputIndex").Uint()
 	obj.Addr = gjson.Get(json.Raw, "AccountId").String()
 	obj.Amount = gjson.Get(json.Raw, "Amount").Uint()
 
@@ -324,12 +325,26 @@ func newTxVinByCore(json *gjson.Result) *Vin {
 
 func newTxVoutByCore(json *gjson.Result) *Vout {
 
+	/*
+					{
+		                "Id": 0,
+		                "Index": 0,
+		                "TransactionHash": "31D2D400CB71FA1EE27A64834C62E3771E4E61B70510129842BF8234A0E89549",
+		                "ReceiverId": "fiiimYQot6bU63mTo5eySeHciKU67dhJc8qsLY",
+		                "Amount": 1328874155,
+		                "Size": 85,
+		                "LockScript": "OP_DUP OP_HASH160 EC87AC8891EF6E2E1093B644D201FC4708C6ADE4 OP_EQUALVERIFY OP_CHECKSIG",
+		                "Spent": false,
+		                "IsDiscarded": false,
+		                "BlockHash": null
+		            }
+	*/
 	obj := Vout{}
 	//解析json
-	obj.Amount = gjson.Get(json.Raw, "value").Uint()
-	obj.Vout = gjson.Get(json.Raw, "vout").Uint()
-	obj.LockScript = gjson.Get(json.Raw, "scriptPubKey.hex").String()
-
+	obj.Amount = gjson.Get(json.Raw, "Amount").Uint()
+	obj.Vout = gjson.Get(json.Raw, "OutputIndex").Uint()
+	obj.LockScript = gjson.Get(json.Raw, "LockScript").String()
+	obj.Addr = gjson.Get(json.Raw, "ReceiverId").String()
 
 	return &obj
 }
