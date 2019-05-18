@@ -211,7 +211,6 @@ type Transaction struct {
 	BlockHeight   uint64
 	Confirmations uint64
 	Blocktime     int64
-	IsCoinBase    bool
 	Fees          uint64
 	Decimals      int32
 	Timestamp     int64
@@ -223,7 +222,6 @@ type Transaction struct {
 }
 
 type Vin struct {
-	Coinbase string
 	TxID     string
 	Vout     uint64
 	N        uint64
@@ -276,11 +274,9 @@ func newTxByCore(json *gjson.Result) *Transaction {
 	if vins := gjson.Get(json.Raw, "Inputs"); vins.IsArray() {
 		for i, vin := range vins.Array() {
 			input := newTxVinByCore(&vin)
-			input.N = uint64(i)
-			obj.Vins = append(obj.Vins, input)
-
-			if input.TxID == "0000000000000000000000000000000000000000000000000000000000000000" {
-				obj.IsCoinBase = true
+			if len(input.Addr) > 0 {
+				input.N = uint64(i)
+				obj.Vins = append(obj.Vins, input)
 			}
 		}
 	}

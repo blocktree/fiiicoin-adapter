@@ -36,20 +36,20 @@ const (
 type FIIIBlockScanner struct {
 	*openwallet.BlockScannerBase
 
-	CurrentBlockHeight   uint64             //当前区块高度
-	extractingCH         chan struct{}      //扫描工作令牌
-	wm                   *WalletManager     //钱包管理者
-	IsScanMemPool        bool               //是否扫描交易池
-	RescanLastBlockCount uint64             //重扫上N个区块数量
+	CurrentBlockHeight   uint64         //当前区块高度
+	extractingCH         chan struct{}  //扫描工作令牌
+	wm                   *WalletManager //钱包管理者
+	IsScanMemPool        bool           //是否扫描交易池
+	RescanLastBlockCount uint64         //重扫上N个区块数量
 
 }
 
 //ExtractResult 扫描完成的提取结果
 type ExtractResult struct {
-	extractData     map[string]*openwallet.TxExtractData
-	TxID            string
-	BlockHeight     uint64
-	Success         bool
+	extractData map[string]*openwallet.TxExtractData
+	TxID        string
+	BlockHeight uint64
+	Success     bool
 }
 
 //SaveResult 保存结果
@@ -59,8 +59,6 @@ type SaveResult struct {
 	Success     bool
 }
 
-
-
 //NewFIIIBlockScanner 创建区块链扫描器
 func NewFIIIBlockScanner(wm *WalletManager) *FIIIBlockScanner {
 	bs := FIIIBlockScanner{
@@ -69,7 +67,7 @@ func NewFIIIBlockScanner(wm *WalletManager) *FIIIBlockScanner {
 
 	bs.extractingCH = make(chan struct{}, maxExtractingSize)
 	bs.wm = wm
-	bs.IsScanMemPool = true
+	bs.IsScanMemPool = false
 	bs.RescanLastBlockCount = 0
 
 	//设置扫描任务
@@ -522,9 +520,9 @@ func (bs *FIIIBlockScanner) ExtractTransaction(blockHeight uint64, blockHash str
 
 	var (
 		result = ExtractResult{
-			BlockHeight:     blockHeight,
-			TxID:            txid,
-			extractData:     make(map[string]*openwallet.TxExtractData),
+			BlockHeight: blockHeight,
+			TxID:        txid,
+			extractData: make(map[string]*openwallet.TxExtractData),
 		}
 	)
 
@@ -564,45 +562,7 @@ func (bs *FIIIBlockScanner) extractTransaction(trx *Transaction, result *Extract
 		success = false
 	} else {
 
-		vin := trx.Vins
 		blocktime := trx.Blocktime
-
-		//检查交易单输入信息是否完整，不完整查上一笔交易单的输出填充数据
-		for _, input := range vin {
-
-			if len(input.Coinbase) > 0 {
-				//coinbase skip
-				success = true
-				break
-			}
-
-			////如果input中没有地址，需要查上一笔交易的output提取
-			//if len(input.Addr) == 0 {
-			//
-			//	intxid := input.TxID
-			//	vout := input.Vout
-			//
-			//	preTx, err := bs.wm.GetTransaction(intxid)
-			//	if err != nil {
-			//		success = false
-			//		break
-			//	} else {
-			//		preVouts := preTx.Vouts
-			//		if len(preVouts) > int(vout) {
-			//			preOut := preVouts[vout]
-			//			input.Addr = preOut.Addr
-			//			input.Value = preOut.Value
-			//			//vinout = append(vinout, output[vout])
-			//			success = true
-			//
-			//			//bs.wm.Log.Debug("GetTxOut:", output[vout])
-			//
-			//		}
-			//	}
-			//
-			//}
-
-		}
 
 		if success {
 
@@ -1186,7 +1146,6 @@ func (wm *WalletManager) GetTxIDsInMemPool() ([]string, error) {
 	return txids, nil
 }
 
-
 //GetTransaction 获取交易单
 func (wm *WalletManager) GetTransaction(txid string) (*Transaction, error) {
 
@@ -1201,7 +1160,6 @@ func (wm *WalletManager) GetTransaction(txid string) (*Transaction, error) {
 
 	return newTxByCore(result), nil
 }
-
 
 //GetTxOut 获取交易单输出信息，用于追溯交易单输入源头
 func (wm *WalletManager) GetTxOut(txid string, vout uint64) (*Vout, error) {
@@ -1332,10 +1290,10 @@ func (wm *WalletManager) calculateUnspent(utxos []*Unspent) map[string]*openwall
 
 		if utxo.Spendable {
 			if utxo.Confirmations > 0 {
-				b, _ := decimal.NewFromString(utxo.Amount)
+				b := common.IntToDecimals(int64(utxo.Amount), wm.Decimal())
 				tb = tb.Add(b)
 			} else {
-				u, _ := decimal.NewFromString(utxo.Amount)
+				u := common.IntToDecimals(int64(utxo.Amount), wm.Decimal())
 				tu = tu.Add(u)
 			}
 		}

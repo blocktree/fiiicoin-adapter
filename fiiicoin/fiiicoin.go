@@ -68,7 +68,7 @@ func (wm *WalletManager) LoadAssetsConfig(c config.Configer) error {
 
 	wm.Config.ServerAPI = c.String("serverAPI")
 	wm.Config.IsTestNet, _ = c.Bool("isTestNet")
-	wm.WalletClient = NewClient(wm.Config.ServerAPI, true)
+	wm.WalletClient = NewClient(wm.Config.ServerAPI, false)
 
 	return nil
 }

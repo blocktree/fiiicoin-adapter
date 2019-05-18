@@ -21,4 +21,4 @@ require (
 	github.com/tidwall/gjson v1.2.1
 )
 
-//replace github.com/blocktree/openwallet => ../../openwallet
+replace github.com/blocktree/openwallet => ../../openwallet

@@ -88,7 +88,7 @@ func TestListUnspent(t *testing.T) {
 	}
 
 	for _, u := range utxos {
-		t.Logf("ListUnspent %s: %s = %s\n", u.Address, u.AccountID, u.Amount)
+		t.Logf("ListUnspent %s: %s = %d\n", u.Address, u.AccountID, u.Amount)
 	}
 }
 

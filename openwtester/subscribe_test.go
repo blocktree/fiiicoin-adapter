@@ -53,14 +53,14 @@ func (sub *subscriberSingle) BlockExtractDataNotify(sourceKey string, data *open
 }
 
 
-func TestSubscribeAddress_FIII(t *testing.T) {
+func TestSubscribeAddress(t *testing.T) {
 
 	var (
 		endRunning = make(chan bool, 1)
 		symbol     = "FIII"
-		accountID  = "HgRBsaiKgoVDagwezos496vqKQCh41pY44JbhW65YA8t"
 		addrs      = map[string]string{
-			"1EPUiSjmJyu4uf97YZL43UA6K24izz3Lms": accountID,
+			"fiiimUwLmiZ5gwyVZvam1eeSbweNz2vaVP6GtB": "sender",
+			"fiiimEvCitDbz4zL1CaboTbj2VsGASC485huXE": "receiver",
 		}
 	)
 
@@ -95,7 +95,7 @@ func TestSubscribeAddress_FIII(t *testing.T) {
 
 	//log.Debug("already got scanner:", assetsMgr)
 	scanner := assetsMgr.GetBlockScanner()
-	scanner.SetRescanBlockHeight(574780)
+	scanner.SetRescanBlockHeight(46044)
 
 	if scanner == nil {
 		log.Error(symbol, "is not support block scan")
