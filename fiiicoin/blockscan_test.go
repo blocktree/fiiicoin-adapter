@@ -42,7 +42,7 @@ func TestGetBlock(t *testing.T) {
 }
 
 func TestGetTransaction(t *testing.T) {
-	raw, err := tw.GetTransaction("A009F0E4B691369F0F4A930F10566D0EA4FD115864A4B829B40765CA138223B0")
+	raw, err := tw.GetTransaction("DED62BB77C2E6C6294E20730E1E0CC8A9B12DFDA2DFA19A6E06D708AF3F95CF6")
 	if err != nil {
 		t.Errorf("GetTransaction failed unexpected error: %v\n", err)
 		return
@@ -69,4 +69,13 @@ func TestGetTransaction(t *testing.T) {
 		t.Logf("Addr[%d] = %v \n", i, out.Addr)
 		t.Logf("Value[%d] = %v \n", i, out.Amount)
 	}
+}
+
+func TestGetTxIDsInMemPool(t *testing.T) {
+	txids, err := tw.GetTxIDsInMemPool()
+	if err != nil {
+		t.Errorf("GetTxIDsInMemPool failed unexpected error: %v\n", err)
+		return
+	}
+	t.Logf("GetTxIDsInMemPool = %v \n", txids)
 }

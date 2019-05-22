@@ -49,6 +49,9 @@ func (decoder *AddressDecoder) PrivateKeyToWIF(priv []byte, isTestnet bool) (str
 //PublicKeyToAddress 公钥转地址
 func (decoder *AddressDecoder) PublicKeyToAddress(pub []byte, isTestnet bool) (string, error) {
 	fiiicoin_addrdec.Default.IsTestNet = decoder.wm.Config.IsTestNet
+	//暂不清楚意义，
+	prefix := []byte{0x30,0x2A,0x30,0x05,0x06,0x03,0x2B,0x65,0x70,0x03,0x21,0x00}
+	pub = append(prefix, pub...)
 	address, err := fiiicoin_addrdec.Default.AddressEncode(pub)
 	if err != nil {
 		return "", err

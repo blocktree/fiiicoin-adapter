@@ -255,3 +255,20 @@ func (wm *WalletManager) CreateRawTransaction(senders []Unspent, receivers map[s
 	}
 	return trx, nil
 }
+
+
+//BroadcastTransaction 广播交易
+func (wm *WalletManager) BroadcastTransaction(msg interface{}) error {
+
+	request := []interface{}{
+		msg,
+	}
+
+	_, err := wm.WalletClient.Call("BroadcastTransaction", request)
+	if err != nil {
+		return err
+	}
+
+	return nil
+
+}

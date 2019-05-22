@@ -88,8 +88,8 @@ func NewUnspent(json *gjson.Result) *Unspent {
 	obj.ScriptPubKey = gjson.Get(json.Raw, "ScriptPubKey").String()
 	obj.Amount = gjson.Get(json.Raw, "amount").Uint()
 	obj.Confirmations = gjson.Get(json.Raw, "confirmations").Uint()
-	obj.Spendable = gjson.Get(json.Raw, "spendable").Bool()
-	//obj.Spendable = true
+	//obj.Spendable = gjson.Get(json.Raw, "spendable").Bool()
+	obj.Spendable = true
 	obj.Solvable = gjson.Get(json.Raw, "solvable").Bool()
 
 	return obj

@@ -60,7 +60,7 @@ func TestSubscribeAddress(t *testing.T) {
 		symbol     = "FIII"
 		addrs      = map[string]string{
 			"fiiimUwLmiZ5gwyVZvam1eeSbweNz2vaVP6GtB": "sender",
-			"fiiimEvCitDbz4zL1CaboTbj2VsGASC485huXE": "receiver",
+			"fiiimEvCitDbz4zL1CaboTbj2VsGASC485huXE": "sender",
 		}
 	)
 

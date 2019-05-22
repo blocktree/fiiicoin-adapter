@@ -111,7 +111,7 @@ func TestWalletManager_CreateAddress(t *testing.T) {
 	tm := testInitWalletManager()
 
 	walletID := "WKFkmvsSFz5mC1cAX3edJC2e6hH6ow3X9E"
-	accountID := "BYj3RiJTjkwLqESVtKxn4XuDLQx1sikTLiwhPqWfsYzN"
+	accountID := "4h4wnCmpzgy3ZTeoMHs3gjDCuWyXQcxDsk9dcwbNGhmR"
 	address, err := tm.CreateAddress(testApp, walletID, accountID, 5)
 	if err != nil {
 		log.Error(err)
@@ -130,8 +130,8 @@ func TestWalletManager_GetAddressList(t *testing.T) {
 
 	tm := testInitWalletManager()
 
-	walletID := "W7tue6SDce38fPwerdKqyebUh6yo2nTQLC"
-	accountID := "BYj3RiJTjkwLqESVtKxn4XuDLQx1sikTLiwhPqWfsYzN"
+	walletID := "WKFkmvsSFz5mC1cAX3edJC2e6hH6ow3X9E"
+	accountID := "HX4tUVg5eETb6SvZeGeAFwk4PQ1CWS6dQeyjj3CqfYyK"
 	list, err := tm.GetAddressList(testApp, walletID, accountID, 0, -1, false)
 	if err != nil {
 		log.Error("unexpected error:", err)
@@ -139,6 +139,7 @@ func TestWalletManager_GetAddressList(t *testing.T) {
 	}
 	for i, w := range list {
 		log.Info("address[", i, "] :", w.Address)
+		//log.Info("address[", i, "] :", w.PublicKey)
 	}
 	log.Info("address count:", len(list))
 
