@@ -129,14 +129,14 @@ func TestTransfer(t *testing.T) {
 	tm := testInitWalletManager()
 	walletID := "WKFkmvsSFz5mC1cAX3edJC2e6hH6ow3X9E"
 	accountID := "HX4tUVg5eETb6SvZeGeAFwk4PQ1CWS6dQeyjj3CqfYyK"
-	to := "fiiimJBDwU4ZgS83cnuUrV65CzRaz9pjLs8En9"
+	to := "fiiimS8BWk1oKnDr1LJn5EpXbSVijKrHVHRybE"
 
 	//accountID := "4h4wnCmpzgy3ZTeoMHs3gjDCuWyXQcxDsk9dcwbNGhmR"
 	//to := "fiiimYt7qZekpQKZauBGxv8kGFJGdMyYtzSgdP"
 
 	testGetAssetsAccountBalance(tm, walletID, accountID)
 
-	rawTx, err := testCreateTransactionStep(tm, walletID, accountID, to, "0.001", "", nil)
+	rawTx, err := testCreateTransactionStep(tm, walletID, accountID, to, "1", "", nil)
 	if err != nil {
 		return
 	}
@@ -158,60 +158,12 @@ func TestTransfer(t *testing.T) {
 
 }
 
-
-func TestTransfer_OMNI(t *testing.T) {
-
-	//mkJrhf8Bp3RWfL5eyatcfqPBDDUUXgHQYm
-	//mkUDixUXqgUqGPEGEtxJUoQBvpDeSnjL2Z
-	//mkzbZ9557cvXAEpvCSQypDoXRiVb8dCtEV
-	//mqUoroU8ttLBNgCatzAgBtvyMYM8M1tN8d
-	//mu9ZjobWsHr2KxLG3ELJTRkYJzRLsSqNCX
-	//mwawxdBn9w4CPxic961vPnyj9HqDVGnkth
-
-	tm := testInitWalletManager()
-	walletID := "W7tue6SDce38fPwerdKqyebUh6yo2nTQLC"
-	accountID := "FqQBQ8Bn26GogR7UAu6e2ZVhrYYmKUpmBS7CSM1KLTTZ"
-	to := "mu9ZjobWsHr2KxLG3ELJTRkYJzRLsSqNCX"
-
-	contract := openwallet.SmartContract{
-		Address:  "2",
-		Symbol:   "FIII",
-		Name:     "Test Omni",
-		Token:    "Omni",
-		Decimals: 8,
-	}
-
-	testGetAssetsAccountBalance(tm, walletID, accountID)
-
-	testGetAssetsAccountTokenBalance(tm, walletID, accountID, contract)
-
-	rawTx, err := testCreateTransactionStep(tm, walletID, accountID, to, "1", "", &contract)
-	if err != nil {
-		return
-	}
-
-	_, err = testSignTransactionStep(tm, rawTx)
-	if err != nil {
-		return
-	}
-
-	_, err = testVerifyTransactionStep(tm, rawTx)
-	if err != nil {
-		return
-	}
-
-	_, err = testSubmitTransactionStep(tm, rawTx)
-	if err != nil {
-		return
-	}
-
-}
 
 func TestSummary(t *testing.T) {
 	tm := testInitWalletManager()
-	walletID := "W7tue6SDce38fPwerdKqyebUh6yo2nTQLC"
-	accountID := "EPxkNBu6iMospC6aHQppv36UGY4mb1WqUE7oNZ7Xp9Df"
-	summaryAddress := "mi9qsHKMqtrgnbxg7ifdPMk1LsFmen4xNn"
+	walletID := "WKFkmvsSFz5mC1cAX3edJC2e6hH6ow3X9E"
+	accountID := "4h4wnCmpzgy3ZTeoMHs3gjDCuWyXQcxDsk9dcwbNGhmR"
+	summaryAddress := "fiiimYt7qZekpQKZauBGxv8kGFJGdMyYtzSgdP"
 
 	testGetAssetsAccountBalance(tm, walletID, accountID)
 
@@ -249,61 +201,3 @@ func TestSummary(t *testing.T) {
 
 }
 
-func TestSummary_OMNI(t *testing.T) {
-
-	tm := testInitWalletManager()
-	walletID := "W7tue6SDce38fPwerdKqyebUh6yo2nTQLC"
-	accountID := "EPxkNBu6iMospC6aHQppv36UGY4mb1WqUE7oNZ7Xp9Df"
-	summaryAddress := "mi9qsHKMqtrgnbxg7ifdPMk1LsFmen4xNn"
-
-	contract := openwallet.SmartContract{
-		Address:  "2",
-		Symbol:   "FIII",
-		Name:     "Test Omni",
-		Token:    "Omni",
-		Decimals: 8,
-	}
-
-	feesSupport := openwallet.FeesSupportAccount{
-		AccountID: "FqQBQ8Bn26GogR7UAu6e2ZVhrYYmKUpmBS7CSM1KLTTZ",
-		FixSupportAmount: "0.01",
-		//FeesSupportScale: "1.3",
-	}
-
-	testGetAssetsAccountBalance(tm, walletID, accountID)
-
-	testGetAssetsAccountTokenBalance(tm, walletID, accountID, contract)
-
-	rawTxArray, err := testCreateSummaryTransactionStep(tm, walletID, accountID,
-		summaryAddress, "", "", "",
-		0, 100, &contract, &feesSupport)
-	if err != nil {
-		log.Errorf("CreateSummaryTransaction failed, unexpected error: %v", err)
-		return
-	}
-
-	//执行汇总交易
-	for _, rawTxWithErr := range rawTxArray {
-
-		if rawTxWithErr.Error != nil {
-			log.Error(rawTxWithErr.Error.Error())
-			continue
-		}
-
-		_, err = testSignTransactionStep(tm, rawTxWithErr.RawTx)
-		if err != nil {
-			return
-		}
-
-		_, err = testVerifyTransactionStep(tm, rawTxWithErr.RawTx)
-		if err != nil {
-			return
-		}
-
-		_, err = testSubmitTransactionStep(tm, rawTxWithErr.RawTx)
-		if err != nil {
-			return
-		}
-	}
-
-}

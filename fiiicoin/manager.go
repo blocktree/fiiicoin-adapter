@@ -110,6 +110,22 @@ func (wm *WalletManager) ExportAddresses() ([]string, error) {
 
 }
 
+// GetAccountByAddress
+func (wm *WalletManager) GetAccountByAddress(address string) (uint64, error) {
+
+	request := []interface{}{
+		address,
+	}
+
+	result, err := wm.WalletClient.Call("GetAccountByAddress", request)
+	if err != nil {
+		return 0, err
+	}
+
+	balance := result.Get("Balance").Uint()
+
+	return balance, nil
+}
 
 //GetBlockChainInfo 获取钱包区块链信息
 func (wm *WalletManager) GetBlockChainInfo() (*BlockchainInfo, error) {
