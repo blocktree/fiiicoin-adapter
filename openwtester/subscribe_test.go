@@ -111,3 +111,58 @@ func TestSubscribeAddress(t *testing.T) {
 
 	<-endRunning
 }
+
+
+func TestSubscribeScanBlock(t *testing.T) {
+
+	var (
+		symbol     = "FIII"
+		addrs      = map[string]string{
+			"fiiimUwLmiZ5gwyVZvam1eeSbweNz2vaVP6GtB": "sender",
+			"fiiimEvCitDbz4zL1CaboTbj2VsGASC485huXE": "sender",
+		}
+	)
+
+	//GetSourceKeyByAddress 获取地址对应的数据源标识
+	scanAddressFunc := func(address string) (string, bool) {
+		key, ok := addrs[address]
+		if !ok {
+			return "", false
+		}
+		return key, true
+	}
+
+	assetsMgr, err := openw.GetAssetsAdapter(symbol)
+	if err != nil {
+		log.Error(symbol, "is not support")
+		return
+	}
+
+	//读取配置
+	absFile := filepath.Join(configFilePath, symbol+".ini")
+
+	c, err := config.NewConfig("ini", absFile)
+	if err != nil {
+		return
+	}
+	assetsMgr.LoadAssetsConfig(c)
+
+	assetsLogger := assetsMgr.GetAssetsLogger()
+	if assetsLogger != nil {
+		assetsLogger.SetLogFuncCall(true)
+	}
+
+	//log.Debug("already got scanner:", assetsMgr)
+	scanner := assetsMgr.GetBlockScanner()
+	if scanner == nil {
+		log.Error(symbol, "is not support block scan")
+		return
+	}
+
+	scanner.SetBlockScanAddressFunc(scanAddressFunc)
+
+	sub := subscriberSingle{}
+	scanner.AddObserver(&sub)
+
+	scanner.ScanBlock(46044)
+}
