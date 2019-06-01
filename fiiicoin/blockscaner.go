@@ -68,7 +68,7 @@ func NewFIIIBlockScanner(wm *WalletManager) *FIIIBlockScanner {
 	bs.extractingCH = make(chan struct{}, maxExtractingSize)
 	bs.wm = wm
 	bs.IsScanMemPool = false
-	bs.RescanLastBlockCount = 0
+	bs.RescanLastBlockCount = 1
 
 	//设置扫描任务
 	bs.SetTask(bs.ScanBlockTask)

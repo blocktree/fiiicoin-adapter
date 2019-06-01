@@ -19,11 +19,7 @@ require (
 	github.com/pborman/uuid v1.2.0
 	github.com/shopspring/decimal v0.0.0-20180709203117-cd690d0c9e24
 	github.com/tidwall/gjson v1.2.1
-	github.com/tidwall/match v1.0.1 // indirect
-	github.com/tidwall/pretty v0.0.0-20190325153808-1166b9ac2b65 // indirect
 )
 
-//replace (
-//github.com/blocktree/go-owcdrivers => ../../go-owcdrivers
-//github.com/blocktree/openwallet => ../../openwallet
-//)
+//replace github.com/blocktree/go-owcdrivers => ../../go-owcdrivers
+//replace github.com/blocktree/openwallet => ../../openwallet
