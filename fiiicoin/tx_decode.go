@@ -194,8 +194,8 @@ func (decoder *TransactionDecoder) CreateFIIIRawTransaction(wrapper openwallet.W
 		searchAddrs = append(searchAddrs, address.Address)
 	}
 	//decoder.wm.Log.Debug(searchAddrs)
-	//查找账户的utxo
-	unspents, err := decoder.wm.ListUnspent(0, searchAddrs...)
+	//查找账户的utxo，强制6个确认
+	unspents, err := decoder.wm.ListUnspent(6, searchAddrs...)
 	if err != nil {
 		return err
 	}
@@ -521,8 +521,8 @@ func (decoder *TransactionDecoder) CreateFIIISummaryRawTransaction(wrapper openw
 	totalInputAmount = decimal.Zero
 
 	for i, addr := range sumAddresses {
-
-		unspents, err := decoder.wm.ListUnspent(sumRawTx.Confirms, addr)
+		//强制6个确认
+		unspents, err := decoder.wm.ListUnspent(6, addr)
 		if err != nil {
 			return nil, err
 		}

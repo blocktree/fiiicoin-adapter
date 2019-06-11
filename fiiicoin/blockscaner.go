@@ -1244,8 +1244,8 @@ func (bs *FIIIBlockScanner) GetBalanceByAddress(address ...string) ([]*openwalle
 
 //getBalanceByExplorer 获取地址余额
 func (wm *WalletManager) getBalanceCalUnspent(address ...string) ([]*openwallet.Balance, error) {
-
-	utxos, err := wm.ListUnspent(0, address...)
+	//强制6个确认
+	utxos, err := wm.ListUnspent(6, address...)
 	if err != nil {
 		return nil, err
 	}
