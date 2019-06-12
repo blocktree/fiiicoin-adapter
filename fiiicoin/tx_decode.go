@@ -201,7 +201,7 @@ func (decoder *TransactionDecoder) CreateFIIIRawTransaction(wrapper openwallet.W
 	}
 
 	if len(unspents) == 0 {
-		return fmt.Errorf("[%s] balance is not enough", accountID)
+		return fmt.Errorf("[%s] balance of more 6 confirmations is not enough", accountID)
 	}
 
 	if len(rawTx.To) == 0 {

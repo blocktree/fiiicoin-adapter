@@ -27,6 +27,7 @@ import (
 ////////////////////////// 测试单个扫描器 //////////////////////////
 
 type subscriberSingle struct {
+	manager *openw.WalletManager
 }
 
 //BlockScanNotify 新区块扫描完成通知
@@ -49,16 +50,15 @@ func (sub *subscriberSingle) BlockExtractDataNotify(sourceKey string, data *open
 
 	log.Std.Notice("data.Transaction: %+v", data.Transaction)
 
-	//tm := testInitWalletManager()
-	//walletID := "WKFkmvsSFz5mC1cAX3edJC2e6hH6ow3X9E"
-	//accountID := "HX4tUVg5eETb6SvZeGeAFwk4PQ1CWS6dQeyjj3CqfYyK"
-	//
-	//balance, err := tm.GetAssetsAccountBalance(testApp, walletID, accountID)
-	//if err != nil {
-	//	log.Error("GetAssetsAccountBalance failed, unexpected error:", err)
-	//	return nil
-	//}
-	//log.Notice("account balance:", balance)
+	walletID := "WKFkmvsSFz5mC1cAX3edJC2e6hH6ow3X9E"
+	accountID := "HX4tUVg5eETb6SvZeGeAFwk4PQ1CWS6dQeyjj3CqfYyK"
+
+	balance, err := sub.manager.GetAssetsAccountBalance(testApp, walletID, accountID)
+	if err != nil {
+		log.Error("GetAssetsAccountBalance failed, unexpected error:", err)
+		return nil
+	}
+	log.Notice("account balance:", balance)
 
 	return nil
 }
@@ -106,7 +106,7 @@ func TestSubscribeAddress(t *testing.T) {
 
 	//log.Debug("already got scanner:", assetsMgr)
 	scanner := assetsMgr.GetBlockScanner()
-	//scanner.SetRescanBlockHeight(209430)
+	scanner.SetRescanBlockHeight(231399)
 
 	if scanner == nil {
 		log.Error(symbol, "is not support block scan")
@@ -115,7 +115,7 @@ func TestSubscribeAddress(t *testing.T) {
 
 	scanner.SetBlockScanAddressFunc(scanAddressFunc)
 
-	sub := subscriberSingle{}
+	sub := subscriberSingle{manager:testInitWalletManager()}
 	scanner.AddObserver(&sub)
 
 	scanner.Run()

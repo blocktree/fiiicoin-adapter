@@ -106,8 +106,8 @@ func TestWalletManager_GetTransactionByWxID(t *testing.T) {
 func TestWalletManager_GetAssetsAccountBalance(t *testing.T) {
 	tm := testInitWalletManager()
 	walletID := "WKFkmvsSFz5mC1cAX3edJC2e6hH6ow3X9E"
-	accountID := "HX4tUVg5eETb6SvZeGeAFwk4PQ1CWS6dQeyjj3CqfYyK"
-	//accountID := "4h4wnCmpzgy3ZTeoMHs3gjDCuWyXQcxDsk9dcwbNGhmR"
+	//accountID := "HX4tUVg5eETb6SvZeGeAFwk4PQ1CWS6dQeyjj3CqfYyK"
+	accountID := "4h4wnCmpzgy3ZTeoMHs3gjDCuWyXQcxDsk9dcwbNGhmR"
 
 	balance, err := tm.GetAssetsAccountBalance(testApp, walletID, accountID)
 	if err != nil {
@@ -152,7 +152,7 @@ func TestWalletManager_GetEstimateFeeRate(t *testing.T) {
 }
 
 func TestGetAddressBalance(t *testing.T) {
-	symbol := "VSYS"
+	symbol := "FIII"
 	assetsMgr, err := openw.GetAssetsAdapter(symbol)
 	if err != nil {
 		log.Error(symbol, "is not support")
@@ -169,12 +169,7 @@ func TestGetAddressBalance(t *testing.T) {
 	bs := assetsMgr.GetBlockScanner()
 
 	addrs := []string{
-		"AR5D3fGVWDz32wWCnVbwstsMW8fKtWdzNFT",
-		"AR9qbgbsmLh3ADSU9ngR22J2HpD5D9ncTCg",
-		"ARAA8AnUYa4kWwWkiZTTyztG5C6S9MFTx11",
-		"ARCUYWyLvGDTrhZ6K9jjMh9B5iRVEf3vRzs",
-		"ARGehumz77nGcfkQrPjK4WUyNevvU9NCNqQ",
-		"ARJdaB9Fo6Sk2nxBrQP2p4woWotPxjaebCv",
+		"fiiimFW25nb5mwXnQxX5V8b29EgyjAQNS9gmD6",
 	}
 
 	balances, err := bs.GetBalanceByAddress(addrs...)
