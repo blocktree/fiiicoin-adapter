@@ -1162,22 +1162,22 @@ func (wm *WalletManager) GetTransaction(txid string) (*Transaction, error) {
 }
 
 //GetTxOut 获取交易单输出信息，用于追溯交易单输入源头
-func (wm *WalletManager) GetTxOut(txid string, vout uint64) (*Vout, error) {
-
-	request := []interface{}{
-		txid,
-		vout,
-	}
-
-	result, err := wm.WalletClient.Call("GetTxOut", request)
-	if err != nil {
-		return nil, err
-	}
-
-	output := newTxVoutByCore(result)
-
-	return output, nil
-}
+//func (wm *WalletManager) GetTxOut(txid string, vout uint64) (*Vout, error) {
+//
+//	request := []interface{}{
+//		txid,
+//		vout,
+//	}
+//
+//	result, err := wm.WalletClient.Call("GetTxOut", request)
+//	if err != nil {
+//		return nil, err
+//	}
+//
+//	output := newTxVoutByCore(result)
+//
+//	return output, nil
+//}
 
 //获取未扫记录
 func (wm *WalletManager) GetUnscanRecords() ([]*UnscanRecord, error) {

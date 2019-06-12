@@ -59,7 +59,7 @@ func (decoder *AddressDecoder) PublicKeyToAddress(pub []byte, isTestnet bool) (s
 
 	err = decoder.wm.AddWatchOnlyAddress(hex.EncodeToString(pub))
 	if err != nil {
-		return "", err
+		return "", fmt.Errorf("AddWatchOnlyAddress: %v", err)
 	}
 
 	return address, nil

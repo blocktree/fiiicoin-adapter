@@ -338,7 +338,7 @@ func newTxVoutByCore(json *gjson.Result) *Vout {
 	obj := Vout{}
 	//解析json
 	obj.Amount = gjson.Get(json.Raw, "Amount").Uint()
-	obj.Vout = gjson.Get(json.Raw, "OutputIndex").Uint()
+	obj.Vout = gjson.Get(json.Raw, "Index").Uint()
 	obj.LockScript = gjson.Get(json.Raw, "LockScript").String()
 	obj.Addr = gjson.Get(json.Raw, "ReceiverId").String()
 

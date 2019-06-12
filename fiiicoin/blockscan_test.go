@@ -42,7 +42,7 @@ func TestGetBlock(t *testing.T) {
 }
 
 func TestGetTransaction(t *testing.T) {
-	raw, err := tw.GetTransaction("0B5B21BBA1F33ACE32D0BE44DDE619B38AB39D5D919DA70DFBAB7490B37801D3")
+	raw, err := tw.GetTransaction("641D1CE59CFBF394A701EBCA2E8A1623D7F3260DBBB0C79CB26B3B9BF6AF860A")
 	if err != nil {
 		t.Errorf("GetTransaction failed unexpected error: %v\n", err)
 		return
@@ -65,6 +65,7 @@ func TestGetTransaction(t *testing.T) {
 	t.Logf("========= vouts ========= \n")
 
 	for i, out := range raw.Vouts {
+		t.Logf("Vout[%d] = %v \n", i, out.Vout)
 		t.Logf("ScriptPubKey[%d] = %v \n", i, out.LockScript)
 		t.Logf("Addr[%d] = %v \n", i, out.Addr)
 		t.Logf("Value[%d] = %v \n", i, out.Amount)
