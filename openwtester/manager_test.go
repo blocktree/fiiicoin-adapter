@@ -112,7 +112,7 @@ func TestWalletManager_CreateAddress(t *testing.T) {
 
 	walletID := "WKFkmvsSFz5mC1cAX3edJC2e6hH6ow3X9E"
 	accountID := "4h4wnCmpzgy3ZTeoMHs3gjDCuWyXQcxDsk9dcwbNGhmR"
-	address, err := tm.CreateAddress(testApp, walletID, accountID, 1000)
+	address, err := tm.CreateAddress(testApp, walletID, accountID, 300)
 	if err != nil {
 		log.Error(err)
 		return
@@ -131,8 +131,8 @@ func TestWalletManager_GetAddressList(t *testing.T) {
 	tm := testInitWalletManager()
 
 	walletID := "WKFkmvsSFz5mC1cAX3edJC2e6hH6ow3X9E"
-	accountID := "HX4tUVg5eETb6SvZeGeAFwk4PQ1CWS6dQeyjj3CqfYyK"
-	//accountID := "4h4wnCmpzgy3ZTeoMHs3gjDCuWyXQcxDsk9dcwbNGhmR"
+	//accountID := "HX4tUVg5eETb6SvZeGeAFwk4PQ1CWS6dQeyjj3CqfYyK"
+	accountID := "4h4wnCmpzgy3ZTeoMHs3gjDCuWyXQcxDsk9dcwbNGhmR"
 	list, err := tm.GetAddressList(testApp, walletID, accountID, 0, -1, false)
 	if err != nil {
 		log.Error("unexpected error:", err)
@@ -147,41 +147,4 @@ func TestWalletManager_GetAddressList(t *testing.T) {
 	tm.CloseDB(testApp)
 }
 
-
-func TestBatchCreateAddressByAccount(t *testing.T) {
-
-	tm := testInitWalletManager()
-
-	symbol := "FIII"
-	walletID := "WKFkmvsSFz5mC1cAX3edJC2e6hH6ow3X9E"
-	accountID := "4h4wnCmpzgy3ZTeoMHs3gjDCuWyXQcxDsk9dcwbNGhmR"
-
-	account, err := tm.GetAssetsAccountInfo(testApp, walletID, accountID)
-	if err != nil {
-		t.Errorf("error: %v", err)
-		return
-	}
-
-
-	assetsMgr, err := openw.GetAssetsAdapter(symbol)
-	if err != nil {
-		log.Error(symbol, "is not support")
-		return
-	}
-
-	decoder := assetsMgr.GetAddressDecode()
-
-	addrArr, err := openwallet.BatchCreateAddressByAccount(account, decoder, 2000, 20)
-	if err != nil {
-		t.Errorf("error: %v", err)
-		return
-	}
-	addrs := make([]string, 0)
-	for _, a := range addrArr {
-		log.Infof("address[%d]: %s", a.Index, a.Address)
-		addrs = append(addrs, a.Address)
-	}
-	log.Infof("create address")
-
-}
 

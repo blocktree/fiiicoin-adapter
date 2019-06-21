@@ -21,4 +21,4 @@ require (
 )
 
 //replace github.com/blocktree/go-owcdrivers => ../../go-owcdrivers
-//replace github.com/blocktree/openwallet => ../../openwallet
+replace github.com/blocktree/openwallet => ../../openwallet
