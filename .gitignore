@@ -1,1 +1,7 @@
-fiiicoin/conf
+*.db
+release
+.vscode
+.idea
+*.key
+*.ini
+go.sum
